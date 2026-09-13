@@ -55,3 +55,49 @@ class Model:
         details=[(n,self._graph.degree(n)) for n in ordered_nodes]
         return len(components), largest, details
 
+    def getPercorsoOttimo(self, ):
+        # 1. Trovo la componente connessa più grande
+        components = list(nx.connected_components(self._graph))
+        if not components:
+            return [], 0
+        #largest_cc = max(components, key=len)
+
+
+        # 3. Inizializzo le variabili per memorizzare il risultato migliore
+        self._best_sol = []
+        self._best_score = 0.0
+
+        # 4. Lancio la ricorsione
+        for nodo in self._graph.nodes:
+            self._ricorsione([nodo])
+
+        return self._best_sol, self._best_score
+
+    def _ricorsione(self, parziale):
+        # --- CASO TERMINALE --
+
+        # 1)VERIFICA LE LA SOLUZIONE ATTUALE è MIGLIORE DEL BEST- CONDIZ DI OTTIMALITà
+        if self._score(parziale) > self._best_score:
+            # salvo la nuova soluz ottima
+            self._best_weight = self._score(parziale)
+            self._best_path = list(parziale)
+
+        ultimo = parziale[-1]
+        for vicino in self._graph.neighbors(ultimo):
+            # Vincolo: vertice visitato una volta sola
+            if vicino not in parziale:
+               # peso_arco = self._graph[ultimo][vicino]["weight"]
+                # Vincolo: peso strettamente decrescente rispetto all'arco precedente!!!
+                if vicino.eta < ultimo.eta:
+                    # Passo in avanti
+                    parziale.append(vicino)
+
+
+
+    def _score(self, parziale):
+        #esplora la soluz parzila ed aggiunge i pesi
+        score=0
+        for i in range(0, len(parziale)-1):
+            score+=self._graph[parziale[i]][parziale[i+1]]["weight"]
+        return score
+

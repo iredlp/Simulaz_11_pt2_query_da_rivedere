@@ -46,4 +46,20 @@ class Controller:
         self._view.update_page()
 
     def handleCammino(self, e):
-        pass
+        listOttima, bestScore = self._model.getPercorsoOttimo()
+
+        if listOttima is None:
+            self._view.txt_result.controls.clear()
+            self._view.txt_result.controls.append(ft.Text(
+                f"Non ci sono abbastanza comoonenti connesse per trovare K costruttori che non siano stati compagni di squadra nel range selezioanto",
+                color="red"))
+            self._view.update_page()
+            return
+
+        self._view.txt_result.controls.clear()
+        self._view.txt_result.controls.append(ft.Text(
+            f"Cammino semplice di lunghezza massima tale che ogni nodo successivo abbia un età strettamente decrescente."))
+
+        for p in listOttima:
+            self._view.txt_result.controls.append(ft.Text(p))
+        self._view.update_page()
